@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskbunny/util/dialogbox.dart';
 import 'package:taskbunny/util/todo_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,6 +22,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void createNewTask () {
+    showDialog(context: context,
+      builder: (context) {
+          return Dialogbox();
+
+      },
+    );  
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +42,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.deepPurple[200],
         elevation: 0,
         centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (createNewTask),
+        child:Icon(Icons.add),
       ),
       body: ListView.builder(
         itemCount: toDoList.length,
