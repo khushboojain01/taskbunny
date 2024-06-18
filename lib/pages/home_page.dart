@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive/hive.dart';
+import 'package:taskbunny/data/database.dart';
 import 'package:taskbunny/util/dialogbox.dart';
 import 'package:taskbunny/util/todo_tile.dart';
 
@@ -11,54 +13,56 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
-  //Text controller
+  //referencing the hive box
+  final _myBox = Hive.openBox('mybox');
+  ToDoDataBase db = ToDoDataBase(); 
+  //instantiation of database
+
+
   final _controller = TextEditingController();
 
   // List of todo tasks
-  List toDoList = [
+  /*List toDoList = [
     ["bake a cake", false],
     ["Do Exercise", false],
   ];
-
-//checkbox is tapped
+*/
+  // Checkbox is tapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
-      toDoList[index][1] = !toDoList[index][1];
+      db.toDoList[index][1] = !db.toDoList[index][1];
     });
   }
 
-  //Save new task
+  // Save new task
   void saveNewTask() {
     setState(() {
-      toDoList.add([_controller.text,false]);
+     db.toDoList.add([_controller.text, false]);
       _controller.clear();
     });
     Navigator.of(context).pop();
-}
-
-  
-//create a new taskk
-  void createNewTask () {
-    showDialog(context: context,
-      builder: (context) {
-          return DialogBox(
-            controller: _controller ,
-            onSave: saveNewTask,
-            onCancel: () =>Navigator.of(context).pop(),
-          );
-
-
-      },
-    );  
   }
 
- //delete task
- void deleteTask (int index) {
-  setState(() {
-    toDoList.removeAt(index);
-  });
- }
+  // Create a new task
+  void createNewTask() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DialogBox(
+          controller: _controller,
+          onSave: saveNewTask,
+          onCancel: () => Navigator.of(context).pop(),
+        );
+      },
+    );
+  }
+
+  // Delete task
+  void deleteTask(int index) {
+    setState(() {
+      db.toDoList.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +75,21 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (createNewTask),
-        child:Icon(Icons.add),
+        onPressed: createNewTask,
+        child: Icon(Icons.add),
       ),
       body: ListView.builder(
-        itemCount: toDoList.length,
+        itemCount: db.toDoList.length,
         itemBuilder: (context, index) {
           return ToDoTile(
-            taskName: toDoList[index][0], // Corrected to use the right index
-            taskCompleted: toDoList[index][1],
-            onChanged: (value) => checkBoxChanged(value, index), // Corrected callback
-            deleteFunction: (context) => deleteTask ,
-            
+            taskName: db.toDoList[index][0], // Get the task name from the list
+            taskCompleted: db.toDoList[index][1], // Get the task completion status from the list
+            onChanged: (value) => checkBoxChanged(value, index), // Callback when checkbox is tapped
+            deleteFunction: (context) => deleteTask(index), // Callback to delete the task, passing the index
           );
         },
       ),
     );
   }
 }
+   
