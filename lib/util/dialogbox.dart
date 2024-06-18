@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:taskbunny/util/my_button.dart';
 
 class DialogBox extends StatelessWidget {
-  const DialogBox({super.key});
+  final controller; 
+  VoidCallback onSave;
+  VoidCallback onCancel;
+
+
+  DialogBox({
+    super.key, 
+    required this.controller,
+    required this.onSave,
+    required this.onCancel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +24,7 @@ class DialogBox extends StatelessWidget {
           children: [
             // Getting user input
             TextField(
+              controller: controller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Add A New Task',
@@ -26,14 +37,14 @@ class DialogBox extends StatelessWidget {
                 // Save button (create a separate file for every detail)
                   MyButton(
                     text:"Save", 
-                  onPressed: () {}),
+                  onPressed: onSave),
 
                   const SizedBox(width: 54),
 
                 // Cancel button
                 MyButton(
                     text:"Cancel", 
-                  onPressed: () {}),
+                  onPressed:onCancel),
               ],
             ),
           ],

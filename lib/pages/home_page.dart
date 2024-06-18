@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:taskbunny/util/dialogbox.dart';
 import 'package:taskbunny/util/todo_tile.dart';
 
@@ -10,22 +11,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
+  //Text controller
+  final _controller = TextEditingController();
+
   // List of todo tasks
   List toDoList = [
     ["bake a cake", false],
     ["Do Exercise", false],
   ];
 
+//checkbox is tapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
       toDoList[index][1] = !toDoList[index][1];
     });
   }
 
+  //Save new task
+  void saveNewTask() {
+    setState(() {
+      toDoList.add([_controller.text,false]);
+    });
+    Navigator.of(context).pop();
+}
+
+  
+
   void createNewTask () {
     showDialog(context: context,
       builder: (context) {
-          return const DialogBox();
+          return DialogBox(
+            controller: _controller ,
+            onSave: saveNewTask,
+            onCancel: () =>Navigator.of(context).pop(),
+          );
 
 
       },
