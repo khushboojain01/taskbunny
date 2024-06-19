@@ -13,34 +13,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //referencing the hive box
-  final _myBox = Hive.openBox('mybox');
-  ToDoDataBase db = ToDoDataBase(); 
-  //instantiation of database
+
+  // referencing the hive box
+  final _myBox = Hive.box('mybox');
+
+   // instantiation of database
+  ToDoDataBase db = ToDoDataBase();
+ 
+  @override
+  void initState() {
+    //if this is the first time ever opening the app, then create default data
+    if (_myBox.get("TODOLIST")== null ) {
+      db.createInitialData();
+    } else {
+      //if not the first time user using the app, data already exists, then
+      db.loadData();
+    }
+    super.initState();
+  }
+
 
 
   final _controller = TextEditingController();
 
   // List of todo tasks
-  /*List toDoList = [
+  /*
+  List toDoList = [
     ["bake a cake", false],
     ["Do Exercise", false],
   ];
-*/
+  */
+
   // Checkbox is tapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
       db.toDoList[index][1] = !db.toDoList[index][1];
     });
+    db.updateDataBase();
   }
 
   // Save new task
   void saveNewTask() {
     setState(() {
-     db.toDoList.add([_controller.text, false]);
+      db.toDoList.add([_controller.text, false]);
       _controller.clear();
     });
     Navigator.of(context).pop();
+    db.updateDataBase();
   }
 
   // Create a new task
@@ -55,6 +74,7 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+    db.updateDataBase();
   }
 
   // Delete task
@@ -62,6 +82,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       db.toDoList.removeAt(index);
     });
+    db.updateDataBase();
   }
 
   @override
@@ -92,4 +113,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-   
